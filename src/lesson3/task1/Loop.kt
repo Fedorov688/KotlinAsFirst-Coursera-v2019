@@ -2,6 +2,7 @@
 
 package lesson3.task1
 
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -193,7 +194,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var k:Long = 1
+    var k: Long = 1
     val sqrtN = sqrt(n.toDouble()).toInt() + 1
     while (k * k !in m..n && k <= sqrtN) k++
     return k * k in m..n
@@ -235,24 +236,29 @@ fun collatzSteps(x: Int): Int {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun factorialCustom(n: Int): Int {
-    var result: Int = 1
+fun factorialCustom(n: Int): Long {
+    var result: Long = 1
     for (i in 1..n) result *= i
     return result
 }
 
 fun sin(x: Double, eps: Double): Double {
     var n: Int = 3
-    var sinX: Double = x
     var checker: Double
+    var checkerFactCus: Long
+    var checkerPow: Double
+    var symbol: Int
+    val xr: Double = if (x > 4 * PI) x / PI % 4 * PI else x
+    var sinX: Double = xr
     do {
-//        println(" x^$n = ${x.pow(n)}")
-//        println("x = $x  sinX = $sinX")
-        sinX = sinX - x.pow(n) / factorialCustom(n) + x.pow(n + 2) / factorialCustom(n + 2)
-        n += 4
-        checker = abs(x.pow(n + 2) / factorialCustom(n + 2))
-//        println("cheker = $checker. eps = $eps")
-    } while (checker > eps) // TODO
+        symbol = if ((n - 3) / 2 % 2 == 0) -1 else 1
+        checkerPow = xr.pow(n)
+        checkerFactCus = factorialCustom(n)
+        checker = checkerPow / checkerFactCus
+        sinX += (symbol * checker)
+        if (checker < 0) checker = -checker
+        n += 2
+    } while (checker > eps)
     return sinX
 }
 
@@ -265,7 +271,25 @@ fun sin(x: Double, eps: Double): Double {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var n: Int = 2
+    var checker: Double
+    var checkerFactCus: Long
+    var checkerPow: Double
+    var symbol: Int
+    val xr: Double = if (x > 4 * PI) x / PI % 4 * PI else x
+    var cosX: Double = 1.0
+    do {
+        symbol = if ((n - 2) / 2 % 2 == 0) -1 else 1
+        checkerPow = xr.pow(n)
+        checkerFactCus = factorialCustom(n)
+        checker = checkerPow / checkerFactCus
+        cosX += (symbol * checker)
+        if (checker < 0) checker = -checker
+        n += 2
+    } while (checker > eps)
+    return cosX
+}
 
 /**
  * Средняя
@@ -274,7 +298,23 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    val decimal: Double = 10.0
+    val listOfNumbers: MutableList<Int> = arrayListOf()
+    var number: Int
+    var level: Int = 0
+    var result: Int = 0
+    while (n / decimal.pow(level).toInt() > 0) {
+        number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
+        listOfNumbers.add(number)
+        level++
+    }
+    for (i in listOfNumbers) {
+        result += i * decimal.pow(level - 1).toInt()
+        level--
+    }
+    return result
+}
 
 /**
  * Средняя
@@ -285,7 +325,18 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    val decimal: Double = 10.0
+    val listOfNumbers: MutableList<Int> = arrayListOf()
+    var number: Int
+    var level: Int = 0
+    while (n / decimal.pow(level).toInt() > 0) {
+        number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
+        listOfNumbers.add(number)
+        level++
+    }
+    return listOfNumbers == listOfNumbers.reversed()
+}
 
 /**
  * Средняя
@@ -295,7 +346,19 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    val decimal: Double = 10.0
+    val listOfNumbers: MutableList<Int> = arrayListOf()
+    val checkNumber: Int = (n % decimal.toInt())
+    var number: Int
+    var level: Int = 0
+    while (n / decimal.pow(level).toInt() > 0) {
+        number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
+        if (checkNumber != number) return true
+        level++
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -306,7 +369,13 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var targetLen: Int = n
+    while (targetLen != 1) {
+        TODO()
+    }
+    return 1
+}
 
 /**
  * Сложная
