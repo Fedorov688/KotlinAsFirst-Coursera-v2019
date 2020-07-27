@@ -163,7 +163,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
 //    } else return false
 //
 // 6.491s 13.20s с добавленным тестом
-    var mnList: MutableList<Int> = arrayListOf()
+    val mnList: MutableList<Int> = arrayListOf()
     if (m < n) {
         for (i in 2..m) {
             if (m % i == 0) {
@@ -348,7 +348,6 @@ fun isPalindrome(n: Int): Boolean {
  */
 fun hasDifferentDigits(n: Int): Boolean {
     val decimal: Double = 10.0
-    val listOfNumbers: MutableList<Int> = arrayListOf()
     val checkNumber: Int = (n % decimal.toInt())
     var number: Int
     var level: Int = 0
@@ -371,10 +370,23 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun squareSequenceDigit(n: Int): Int {
     var targetLen: Int = n
-    while (targetLen != 1) {
-        TODO()
+    var sqrNumber: Int = 1
+    var tmpNumber: Int = 1
+    var i: Int
+    val result: Int
+    while (targetLen > 0) {
+        sqrNumber = tmpNumber * tmpNumber
+        i = 0
+        while (sqrNumber / 10.0.pow(i).toInt() > 0) {
+            i++
+            targetLen--
+        }
+        tmpNumber++
     }
-    return 1
+    result = if (n > 0) {
+        sqrNumber % 10.0.pow(abs(targetLen) + 1).toInt() / 10.0.pow(abs(targetLen)).toInt()
+    } else 0
+    return result
 }
 
 /**
