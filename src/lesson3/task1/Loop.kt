@@ -72,7 +72,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var tmp: Int = n
-    var numbers: Int = 0
+    var numbers = 0
     do {
         tmp /= 10
         numbers += 1
@@ -87,9 +87,9 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    var n1: Int = 1
-    var n2: Int = 1
-    var result: Int = 1
+    var n1 = 1
+    var n2 = 1
+    var result = 1
     if (n == 1 || n == 2) return result
     else {
         for (i in 3..n) {
@@ -109,10 +109,11 @@ fun fib(n: Int): Int {
  */
 fun lcm(m: Int, n: Int): Int {
 // 19.793s not optimal algorithm, but works
-    var k: Int
-    if (m > n) k = m
-    else if (m < n) k = n
-    else return m
+    var k: Int = when {
+        m > n -> m
+        m < n -> n
+        else -> return m
+    }
     while ((k % m != 0) || (k % n != 0)) {
         k++
     }
@@ -125,7 +126,7 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var k: Int = 2
+    var k = 2
     while (n % k != 0) k++
     return k
 }
@@ -218,7 +219,7 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  */
 fun collatzSteps(x: Int): Int {
     var tmpX: Int = x
-    var i: Int = 0
+    var i = 0
     while (tmpX != 1) {
         if (tmpX % 2 == 0) tmpX /= 2
         else tmpX = 3 * tmpX + 1
@@ -243,7 +244,7 @@ fun factorialCustom(n: Int): Long {
 }
 
 fun sin(x: Double, eps: Double): Double {
-    var n: Int = 3
+    var n = 3
     var checker: Double
     var checkerFactCus: Long
     var checkerPow: Double
@@ -272,13 +273,13 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var n: Int = 2
+    var n = 2
     var checker: Double
     var checkerFactCus: Long
     var checkerPow: Double
     var symbol: Int
     val xr: Double = if (x > 4 * PI) x / PI % 4 * PI else x
-    var cosX: Double = 1.0
+    var cosX = 1.0
     do {
         symbol = if ((n - 2) / 2 % 2 == 0) -1 else 1
         checkerPow = xr.pow(n)
@@ -299,11 +300,11 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    val decimal: Double = 10.0
+    val decimal = 10.0
     val listOfNumbers: MutableList<Int> = arrayListOf()
     var number: Int
-    var level: Int = 0
-    var result: Int = 0
+    var level = 0
+    var result = 0
     while (n / decimal.pow(level).toInt() > 0) {
         number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
         listOfNumbers.add(number)
@@ -326,10 +327,10 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    val decimal: Double = 10.0
+    val decimal = 10.0
     val listOfNumbers: MutableList<Int> = arrayListOf()
     var number: Int
-    var level: Int = 0
+    var level = 0
     while (n / decimal.pow(level).toInt() > 0) {
         number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
         listOfNumbers.add(number)
@@ -347,10 +348,10 @@ fun isPalindrome(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    val decimal: Double = 10.0
+    val decimal = 10.0
     val checkNumber: Int = (n % decimal.toInt())
     var number: Int
-    var level: Int = 0
+    var level = 0
     while (n / decimal.pow(level).toInt() > 0) {
         number = (n % decimal.pow(level + 1) / decimal.pow(level)).toInt()
         if (checkNumber != number) return true
@@ -370,8 +371,8 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun squareSequenceDigit(n: Int): Int {
     var targetLen: Int = n
-    var sqrNumber: Int = 1
-    var tmpNumber: Int = 1
+    var sqrNumber = 1
+    var tmpNumber = 1
     var i: Int
     val result: Int
     while (targetLen > 0) {
@@ -398,4 +399,23 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var targetLen: Int = n
+    var sqrNumber = 1
+    var tmpNumber = 1
+    var i: Int
+    val result: Int
+    while (targetLen > 0) {
+        sqrNumber = fib(tmpNumber)
+        i = 0
+        while (sqrNumber / 10.0.pow(i).toInt() > 0) {
+            i++
+            targetLen--
+        }
+        tmpNumber++
+    }
+    result = if (n > 0) {
+        sqrNumber % 10.0.pow(abs(targetLen) + 1).toInt() / 10.0.pow(abs(targetLen)).toInt()
+    } else 0
+    return result
+}
