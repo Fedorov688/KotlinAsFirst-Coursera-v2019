@@ -376,7 +376,6 @@ fun roman(n: Int): String {
     } else if (tmpN in 1..3) {
         result.add(romanList[0].repeat(tmpN))
     }
-    println("n = $n result = ${result.joinToString(separator = "")}")
     return result.joinToString(separator = "")
 }
 
