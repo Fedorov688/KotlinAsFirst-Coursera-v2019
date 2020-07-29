@@ -4,6 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
+import ru.spbstu.kotlin.generate.FromAlphabet
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -266,7 +267,17 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val tmpAlphabet: MutableList<Char> = arrayListOf()
+    var resultStr = ""
+    val tmpList = convert(n, base)
+    for (word in 'a'..'z') tmpAlphabet.add(word)
+    tmpList.indices.forEach { i ->
+        resultStr += if (tmpList[i] > 9) tmpAlphabet[tmpList[i] - 10].toString()
+        else tmpList[i].toString()
+    }
+    return resultStr
+}
 
 /**
  * Средняя
@@ -275,7 +286,13 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var result = 0
+    digits.indices.forEach { i ->
+        result += digits[i] * base.toDouble().pow(digits.size - i - 1).toInt()
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -289,7 +306,18 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val tmpAlphabet: MutableList<Char> = arrayListOf()
+    val tmpList: MutableList<Int> = arrayListOf()
+    for (number in '0'..'9') tmpAlphabet.add(number)
+    for (word in 'a'..'z') tmpAlphabet.add(word)
+    str.run {
+        forEach {
+            tmpList.add(tmpAlphabet.indexOf(it))
+        }
+    }
+    return decimal(tmpList, base)
+}
 
 /**
  * Сложная
@@ -299,7 +327,58 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    val romanList: ArrayList<String> = arrayListOf("I", "V", "X", "L", "C", "D", "M")
+    val result: MutableList<String> = arrayListOf()
+    var tmpN = n
+    if (tmpN > 1000) {
+        result.add(romanList[6].repeat(tmpN / 1000))
+        tmpN %= 1000
+    }
+    if (tmpN >= 900) {
+        result.add(romanList[4])
+        result.add(romanList[6])
+        tmpN %= 100
+    } else if (tmpN >= 600) {
+        result.add(romanList[5])
+        result.add(romanList[4].repeat(tmpN / 100 - 5))
+        tmpN %= 100
+    } else if (tmpN < 600 && tmpN / 100 > 1) {
+        result.add(romanList[4].repeat(5 - tmpN / 100))
+        result.add(romanList[5])
+        tmpN %= 100
+    }
+    if (tmpN >= 90) {
+        result.add(romanList[2])
+        result.add(romanList[4])
+        tmpN %= 10
+    } else if (tmpN >= 60) {
+        result.add(romanList[3])
+        result.add(romanList[2].repeat(tmpN / 10 - 5))
+        tmpN %= 10
+    } else if (tmpN < 60 && tmpN / 10 > 1) {
+        result.add(romanList[2].repeat(5 - tmpN / 10))
+        result.add(romanList[3])
+        tmpN %= 10
+    }
+    if (tmpN >= 9) {
+        result.add(romanList[0])
+        result.add(romanList[2])
+    } else if (tmpN >= 6) {
+        result.add(romanList[1])
+        result.add(romanList[0].repeat(tmpN - 5))
+    } else if (tmpN == 6) {
+        result.add(romanList[0])
+        result.add(romanList[1])
+    } else if (tmpN in 4..5) {
+        result.add(romanList[0].repeat(5 - tmpN))
+        result.add(romanList[1])
+    } else if (tmpN in 1..3) {
+        result.add(romanList[0].repeat(tmpN))
+    }
+    println("n = $n result = ${result.joinToString(separator = "")}")
+    return result.joinToString(separator = "")
+}
 
 /**
  * Очень сложная
@@ -308,4 +387,68 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val result: MutableList<String> = arrayListOf()
+    var hundredThousand = false
+    var tmpN = n
+    val numberList: MutableList<String> = arrayListOf(
+        "один", "два", "три",
+        "четыре", "пять", "шесть",
+        "семь", "восемь", "девять"
+    )
+    val numberHTList: MutableList<String> = arrayListOf(
+        "одна", "две", "три",
+        "четыре", "пять", "шесть",
+        "семь", "восемь", "девять"
+    )
+    val tenList: MutableList<String> = arrayListOf(
+        "десять", "одиннадцать", "двенадцать", "тринадцать",
+        "четырнадцать", "пятнадцать", "шестнадцать",
+        "семнадцать", "восемнадцать", "девятнадцать"
+    )
+    val decimalList: MutableList<String> = arrayListOf(
+        "десять", "двадцать", "тридцать",
+        "сорок", "пятьдесят", "шестьдесят",
+        "семьдесят", "восемьдесят", "девяносто"
+    )
+    val hundredList: MutableList<String> = arrayListOf(
+        "сто", "двести", "триста",
+        "четыреста", "пятьсот", "шестьсот",
+        "семьсот", "восемьсот", "девятьсот"
+    )
+    if (tmpN > 1000) {
+        var tmpTN = tmpN / 1000
+        if (tmpTN > 100) {
+            result.add(hundredList[tmpTN / 100 - 1])
+            tmpTN %= 100
+            hundredThousand = true
+        }
+        if (tmpTN > 20) {
+            result.add(decimalList[tmpTN / 10 - 1])
+            tmpTN %= 10
+        }
+        if (tmpTN in 10..19) {
+            result.add(tenList[tmpTN % 10])
+        } else if (tmpTN in 1..9) {
+            if (hundredThousand) result.add(numberList[tmpTN - 1])
+            else result.add(numberHTList[tmpTN - 1])
+        }
+        if (hundredThousand) result.add("тысяч")
+        else result.add("тысячи")
+        tmpN %= 1000
+    }
+    if (tmpN > 100) {
+        result.add(hundredList[tmpN / 100 - 1])
+        tmpN %= 100
+    }
+    if (tmpN > 20) {
+        result.add(decimalList[tmpN / 10 - 1])
+        tmpN %= 10
+    }
+    if (tmpN in 10..19) {
+        result.add(tenList[tmpN % 10])
+    } else if (tmpN in 1..9) {
+        result.add(numberList[tmpN - 1])
+    }
+    return result.joinToString(separator = " ")
+}
