@@ -137,7 +137,14 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TODO()
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMap<String, String> {
+    val tmpList: MutableList<String> = arrayListOf()
+    a.forEach { (key, _) ->
+        if (b.containsKey(key)) if (b[key] == a[key]) tmpList.add(key)
+    }
+    for (key in tmpList) a.remove(key)
+    return a
+}
 
 /**
  * Простая
@@ -146,7 +153,13 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TO
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    val resultList: MutableList<String> = arrayListOf()
+    a.forEach { element ->
+        if (element in b && element !in resultList) resultList.add(element)
+    }
+    return resultList
+}
 
 /**
  * Средняя
@@ -165,7 +178,19 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val mapResult: MutableMap<String, String> = mutableMapOf()
+    mapA.forEach { (key, value) ->
+        if (mapB.containsKey(key)) {
+            if (mapA[key] == mapB[key]) mapResult[key] = value
+            else mapResult[key] = value + ", " + mapB[key]
+        } else mapResult[key] = value
+    }
+    mapB.forEach { (key, value) ->
+        if (!mapResult.containsKey(key)) mapResult[key] = value
+    }
+    return mapResult
+}
 
 /**
  * Средняя
