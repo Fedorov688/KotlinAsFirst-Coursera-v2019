@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import lesson4.task1.squares
+import kotlin.reflect.typeOf
+
 /**
  * Пример
  *
@@ -202,7 +205,18 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val tmpMap: MutableMap<String, MutableList<Double>> = mutableMapOf()
+    val resultMap: MutableMap<String, Double> = mutableMapOf()
+    stockPrices.forEach {
+        if (tmpMap.containsKey(it.first)) tmpMap[it.first]?.add(it.second)
+        else tmpMap[it.first] = mutableListOf(it.second)
+    }
+    tmpMap.forEach { (key, listOfPrice) ->
+        resultMap[key] = listOfPrice.sum() / listOfPrice.size
+    }
+    return resultMap
+}
 
 /**
  * Средняя
@@ -219,7 +233,22 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    var tmpMinPrice: Double? = null
+    var result: String? = null
+    stuff.forEach { key, (first, second) ->
+        if (first == kind) {
+            if (tmpMinPrice == null) {
+                tmpMinPrice = second
+                result = key
+            } else if (tmpMinPrice!! > second) {
+                tmpMinPrice = second
+                result = key
+            }
+        }
+    }
+    return result
+}
 
 /**
  * Средняя
@@ -230,7 +259,10 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    for (i in word) if (i !in chars) return false
+    return true
+}
 
 /**
  * Средняя
@@ -244,7 +276,19 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val tmpRemoveList: MutableList<String> = mutableListOf()
+    val resultMap: MutableMap<String, Int> = mutableMapOf()
+    list.forEach { element ->
+        if (resultMap.containsKey(element)) resultMap[element] = resultMap[element]!! + 1
+        else resultMap[element] = 1
+    }
+    resultMap.forEach { (key, numbers) ->
+        if (numbers < 2) tmpRemoveList.add(key)
+    }
+    for (key in tmpRemoveList) resultMap.remove(key)
+    return resultMap
+}
 
 /**
  * Средняя
@@ -255,7 +299,21 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    val tmpWordMap: MutableMap<String, MutableList<Char>> = mutableMapOf()
+    words.forEach { word ->
+        word.forEach {
+            if (tmpWordMap.containsKey(word)) tmpWordMap[word]?.add(it)
+            else tmpWordMap[word] = mutableListOf(it)
+        }
+    }
+    for ((key1, charList1) in tmpWordMap) {
+        for ((key2, charList2) in tmpWordMap) {
+            if (key1 != key2 && charList1.sorted() == charList2.sorted()) return true
+        }
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -281,7 +339,23 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    var tmpFriends: MutableMap<String, MutableSet<String>> = friends as MutableMap<String, MutableSet<String>>
+    println("tmpFriends = $tmpFriends")
+//    tmpFriends["Marat"] = tmpSet
+    tmpFriends.forEach { (name, friendList) ->
+        friendList.forEach { friend ->
+            tmpFriends[friend]?.forEach { itFriend ->
+                if (itFriend != name && !tmpFriends[name]!!.contains(itFriend)) {
+                    println("tmpFriends[$name] = ${tmpFriends[name]}")
+                    tmpFriends[name]?.add(itFriend) // TODO()
+                    println("tmpFriends[$name] = ${tmpFriends[name]}")
+                }
+            }
+        }
+    }
+    return tmpFriends
+}
 
 /**
  * Сложная
