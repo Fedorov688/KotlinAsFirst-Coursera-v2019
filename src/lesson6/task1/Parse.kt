@@ -69,7 +69,25 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val dateMaxCorrect: Map<String, Int> = mutableMapOf(
+        "января" to 31, "февраля" to 29, "марта" to 31, "апреля" to 30,
+        "мая" to 31, "июня" to 30, "июля" to 31, "августа" to 31,
+        "сентября" to 30, "октября" to 31, "ноября" to 30, "декабря" to 31
+    )
+    val dateCorrect: Map<String, Int> = mutableMapOf(
+        "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4,
+        "мая" to 5, "июня" to 6, "июля" to 7, "августа" to 8,
+        "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
+    )
+    val parts = str.split(" ")
+    if (parts.size != 3) return ""
+    else if (!dateMaxCorrect.containsKey(parts[1])) return ""
+    else if (parts[0].toInt() > dateMaxCorrect[parts[1]]!!) return ""
+    else if (parts[1] == "февраля" && parts[0].toInt() == 29 && parts[2].toInt() % 4 != 0) return ""
+    else if (parts[1] == "февраля" && parts[0].toInt() == 29 && parts[2].toInt() % 100 == 0 && parts[2].toInt() % 400 != 0) return ""
+    return String.format("%02d.%02d.%02d", parts[0].toInt(), dateCorrect[parts[1]], parts[2].toInt())
+}
 
 /**
  * Средняя
