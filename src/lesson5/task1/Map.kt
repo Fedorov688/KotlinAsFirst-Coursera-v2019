@@ -339,15 +339,16 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
+@Suppress("UNCHECKED_CAST")
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     var tmpFriends: MutableMap<String, MutableSet<String>> = friends as MutableMap<String, MutableSet<String>>
-    println("tmpFriends = $tmpFriends")
 //    tmpFriends["Marat"] = tmpSet
     tmpFriends.forEach { (name, friendList) ->
         friendList.forEach { friend ->
             tmpFriends[friend]?.forEach { itFriend ->
                 if (itFriend != name && !tmpFriends[name]!!.contains(itFriend)) {
                     println("tmpFriends[$name] = ${tmpFriends[name]}")
+//                    tmpFriends[name] = itFriend
                     tmpFriends[name]?.add(itFriend) // TODO()
                     println("tmpFriends[$name] = ${tmpFriends[name]}")
                 }
