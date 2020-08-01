@@ -2,8 +2,6 @@
 
 package lesson5.task1
 
-import lesson4.task1.squares
-import kotlin.reflect.typeOf
 
 /**
  * Пример
@@ -236,13 +234,13 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var tmpMinPrice: Double? = null
     var result: String? = null
-    stuff.forEach { key, (first, second) ->
-        if (first == kind) {
+    stuff.forEach { (key, stuffPair) ->
+        if (stuffPair.first == kind) {
             if (tmpMinPrice == null) {
-                tmpMinPrice = second
+                tmpMinPrice = stuffPair.second
                 result = key
-            } else if (tmpMinPrice!! > second) {
-                tmpMinPrice = second
+            } else if (tmpMinPrice!! > stuffPair.second) {
+                tmpMinPrice = stuffPair.second
                 result = key
             }
         }
@@ -339,23 +337,30 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-@Suppress("UNCHECKED_CAST")
+
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    var tmpFriends: MutableMap<String, MutableSet<String>> = friends as MutableMap<String, MutableSet<String>>
-//    tmpFriends["Marat"] = tmpSet
+    val tmpFriends: MutableMap<String, MutableSet<String>> = mutableMapOf()
+    val result: MutableMap<String, MutableSet<String>> = mutableMapOf()
+    friends.forEach { (key, value) ->
+        tmpFriends[key] = value.toMutableSet()
+    }
     tmpFriends.forEach { (name, friendList) ->
         friendList.forEach { friend ->
-            tmpFriends[friend]?.forEach { itFriend ->
-                if (itFriend != name && !tmpFriends[name]!!.contains(itFriend)) {
-                    println("tmpFriends[$name] = ${tmpFriends[name]}")
-//                    tmpFriends[name] = itFriend
-                    tmpFriends[name]?.add(itFriend) // TODO()
-                    println("tmpFriends[$name] = ${tmpFriends[name]}")
+            if (tmpFriends[friend] != null) {
+                tmpFriends[friend]?.forEach { itFriend ->
+                    if (itFriend != name && !tmpFriends[name]!!.contains(itFriend)) {
+                        tmpFriends[name]?.add(itFriend)
+                    }
                 }
+            } else {
+                tmpFriends[friend] = mutableSetOf()
             }
         }
     }
-    return tmpFriends
+    tmpFriends.forEach { (name, value) ->
+        result[name] = value.sorted().toMutableSet()
+    }
+    return result
 }
 
 /**
@@ -375,7 +380,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    list.forEach { it1 ->
+        list.forEach { it2 ->
+            if (it1 != it2 && it1 + it2 == number) return Pair(list.indexOf(it1), list.indexOf(it2))
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная
@@ -398,4 +410,17 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+// Примечание - задача/тест является недоработанным. В перспективе алгоритм должен оценивать возможность
+// максимального заполнения на основании вместимости и удельного коэф. стоимости (cofUnitCost)
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val tmpTreasures: MutableMap<String, Pair<Int, Int>> = mutableMapOf()
+    val cofUnitCost: MutableMap<String, Double> = mutableMapOf()
+    treasures.forEach { (name, specs) ->
+        if (specs.first < capacity) {
+            tmpTreasures[name] = specs
+            cofUnitCost[name] = specs.second.toDouble() / specs.first.toDouble()
+        }
+    }
+    return if (tmpTreasures.isEmpty()) emptySet()
+    else cofUnitCost.filterValues { it == cofUnitCost.values.sorted().reversed()[0] }.keys
+}
