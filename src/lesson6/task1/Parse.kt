@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.NumberFormatException
+
 /**
  * Пример
  *
@@ -84,8 +86,15 @@ fun dateStrToDigit(str: String): String {
     if (parts.size != 3) return ""
     else if (!dateMaxCorrect.containsKey(parts[1])) return ""
     else if (parts[0].toInt() > dateMaxCorrect[parts[1]]!!) return ""
-    else if (parts[1] == "февраля" && parts[0].toInt() == 29 && parts[2].toInt() % 4 != 0) return ""
-    else if (parts[1] == "февраля" && parts[0].toInt() == 29 && parts[2].toInt() % 100 == 0 && parts[2].toInt() % 400 != 0) return ""
+    else if (parts[1] == "февраля" &&
+        parts[0].toInt() == 29 &&
+        parts[2].toInt() % 4 != 0
+    ) return ""
+    else if (parts[1] == "февраля" &&
+        parts[0].toInt() == 29 &&
+        parts[2].toInt() % 100 == 0 &&
+        parts[2].toInt() % 400 != 0
+    ) return ""
     return String.format("%02d.%02d.%02d", parts[0].toInt(), dateCorrect[parts[1]], parts[2].toInt())
 }
 
@@ -99,7 +108,38 @@ fun dateStrToDigit(str: String): String {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val dateMaxCorrect: Map<String, Int> = mutableMapOf(
+        "января" to 31, "февраля" to 29, "марта" to 31, "апреля" to 30,
+        "мая" to 31, "июня" to 30, "июля" to 31, "августа" to 31,
+        "сентября" to 30, "октября" to 31, "ноября" to 30, "декабря" to 31
+    )
+    val dateCorrect: Map<Int, String> = mutableMapOf(
+        1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля",
+        5 to "мая", 6 to "июня", 7 to "июля", 8 to "августа",
+        8 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря"
+    )
+    val parts = digital.split(".").toMutableList()
+    if (parts.size != 3) return ""
+    try {
+        for (i in parts) i.toInt()
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    if (!dateCorrect.containsKey(parts[1].toInt())) return ""
+    else parts[1] = dateCorrect[parts[1].toInt()]!!
+    if (parts[0].toInt() > dateMaxCorrect[parts[1]]!!) return ""
+    else if (parts[1] == "февраля" &&
+        parts[0].toInt() == 29 &&
+        parts[2].toInt() % 4 != 0
+    ) return ""
+    else if (parts[1] == "февраля" &&
+        parts[0].toInt() == 29 &&
+        parts[2].toInt() % 100 == 0 &&
+        parts[2].toInt() % 400 != 0
+    ) return ""
+    return String.format("%d %s %d", parts[0].toInt(), parts[1], parts[2].toInt())
+}
 
 /**
  * Средняя
@@ -115,7 +155,25 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val checkList: List<Char> = listOf(
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0',
+        '+', '-', '(', ')', ' '
+    )
+    val resList: List<Char> = listOf(
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0',
+        '+'
+    )
+    var result = ""
+    if ("()" in phone) return ""
+    for (element in phone) {
+        if (element !in checkList) return ""
+        else if (element in resList) result += element
+    }
+    return result
+}
 
 /**
  * Средняя
