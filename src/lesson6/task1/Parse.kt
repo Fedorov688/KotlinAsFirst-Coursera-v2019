@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 
 /**
@@ -185,7 +187,24 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val checkList = listOf(
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0',
+        '%', '-', ' '
+    )
+    var result: Int = -1
+    for (i in jumps) if (i !in checkList) return result
+    val parts = jumps.split(" ")
+    for (part in parts) {
+        try {
+            if (result < part.toInt()) result = part.toInt()
+        } catch (e: NumberFormatException) {
+            continue
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -198,7 +217,26 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val checkList = listOf(
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0',
+        '%', '-', '+', ' '
+    )
+    var result: Int = -1
+    for (i in jumps) if (i !in checkList) return result
+    val parts = jumps.split(" ")
+    for (i in parts.indices step 2) {
+        if ("+" in parts[i + 1]) {
+            try {
+                if (result < parts[i].toInt()) result = parts[i].toInt()
+            } catch (e: NumberFormatException) {
+                continue
+            }
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -209,7 +247,30 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val parts = expression.split(" ")
+    var result = 0
+    val numberList = listOf(
+        '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0'
+    )
+    val symbolList = listOf(
+        "-", "+"
+    )
+    for (i in parts.indices) {
+        if (i % 2 == 0) {
+            for (number in parts[i]) if (number !in numberList) throw IllegalArgumentException()
+            when {
+                i == 0 -> result += parts[i].toInt()
+                parts[i - 1] == symbolList[0] -> result -= parts[i].toInt()
+                parts[i - 1] == symbolList[1] -> result += parts[i].toInt()
+            }
+        } else if (i % 2 == 1) {
+            if (parts[i] !in symbolList) throw IllegalArgumentException()
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -220,7 +281,27 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.toLowerCase().split(" ")
+    if (words.size <= 1) return -1
+    for (i in 0 until words.size - 1) {
+        if (words[i] == words[i + 1]) {
+            var index = 0
+            val checkLengthWord = words[i].length
+            val indexList = mutableListOf<Int>()
+            do {
+                indexList.add(str.toLowerCase().indexOf(words[i], index))
+                index = indexList.last() + checkLengthWord + 1
+            } while (indexList.last() != -1)
+            if (indexList.size > 1) {
+                for (indx in 0 until indexList.size - 1) {
+                    if (indexList[indx] + checkLengthWord + 1 == indexList[indx + 1]) return indexList[indx]
+                }
+            }
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -233,7 +314,28 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val descList = description.split("; ")
+    val descMap = mutableMapOf<String, Double>()
+    var tmpCost = 0.0
+    var result = ""
+    for (element in descList) {
+        val tmp = element.split(" ")
+        try {
+            descMap[tmp[0]] = tmp[1].toDouble()
+        } catch (e: IndexOutOfBoundsException) {
+            return result
+        }
+    }
+    descMap.forEach { (key, value) ->
+        if (value < 0) return result
+        else if (value > tmpCost) {
+            tmpCost = value
+            result = key
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
