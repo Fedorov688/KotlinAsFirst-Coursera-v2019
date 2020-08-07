@@ -348,7 +348,30 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val romanMap: Map<Char, Int> = mapOf(
+        'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50,
+        'C' to 100, 'D' to 500, 'M' to 1000
+    )
+    val resultList = mutableListOf<Int>()
+    var result = 0
+    roman.forEach { element ->
+        if (!romanMap.containsKey(element)) return -1
+        resultList.add(romanMap.getValue(element))
+    }
+    for (i in resultList.indices) {
+        var tmpzn = true
+        for (indx in i until resultList.size) {
+            if (resultList[i] < resultList[indx]) {
+                tmpzn = false
+                break
+            }
+        }
+        if (tmpzn) result += resultList[i]
+        else result -= resultList[i]
+    }
+    return result
+}
 
 /**
  * Очень сложная
