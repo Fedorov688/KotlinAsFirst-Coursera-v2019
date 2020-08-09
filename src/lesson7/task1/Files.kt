@@ -88,7 +88,32 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val checkLIst = listOf(
+        'Ж', 'Ч', 'Ш', 'Щ',
+        'ж', 'ч', 'ш', 'щ'
+    )
+    val changeMap = mapOf(
+        'Ы' to 'И', 'Я' to 'А', 'Ю' to 'У',
+        'ы' to 'и', 'я' to 'а', 'ю' to 'у'
+    )
+    val outputStream = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        var tmpLine = ""
+        var skipStep = false
+        for (i in line.indices) {
+            if (line[i] in checkLIst && i < line.length - 1) {
+                if (changeMap.containsKey(line[i + 1])) {
+                    tmpLine += line[i]
+                    tmpLine += changeMap.getValue(line[i + 1])
+                    skipStep = true
+                } else tmpLine += line[i]
+            } else if (skipStep) skipStep = false
+            else tmpLine += line[i]
+        }
+        outputStream.write(tmpLine)
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
@@ -109,7 +134,33 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    var maxLength = 0
+    var tmpLine: String
+    var leftShift: Int
+    for (line in File(inputName).readLines()) {
+        if (maxLength < line.length) maxLength = line.length
+    }
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) {
+            tmpLine = " ".repeat(maxLength / 2)
+        } else if (line[0] in " " || line[line.lastIndex] in " ") {
+            var startIndx = 0
+            var endIndx = 0
+            val reverseLine = line.reversed()
+            while (line[startIndx] in " ") startIndx++
+            while (reverseLine[endIndx] in " ") endIndx++
+            tmpLine = line.substring(startIndx, line.length - endIndx)
+            leftShift = (maxLength - tmpLine.length) / 2
+            tmpLine = " ".repeat(leftShift) + tmpLine
+        } else {
+            leftShift = (maxLength - line.length) / 2
+            tmpLine = " ".repeat(leftShift) + line
+        }
+        outputStream.write(tmpLine)
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
